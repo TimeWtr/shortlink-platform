@@ -50,7 +50,7 @@ func (z *ZapLogger) Errorf(s string, fields ...Field) {
 }
 
 func (z *ZapLogger) transfer(fields ...Field) []zap.Field {
-	res := make([]zap.Field, 0, len(fields))
+	res := make([]zap.Field, len(fields))
 	for _, field := range fields {
 		res = append(res, zap.Any(field.Key, field.Val))
 	}
@@ -62,3 +62,17 @@ type Field struct {
 	Key string
 	Val any
 }
+
+type NopLogger struct{}
+
+func NewNopLogger() Logger {
+	return &NopLogger{}
+}
+
+func (n *NopLogger) Debugf(s string, field ...Field) {}
+
+func (n NopLogger) Infof(s string, field ...Field) {}
+
+func (n NopLogger) Warnf(s string, field ...Field) {}
+
+func (n NopLogger) Errorf(s string, field ...Field) {}
