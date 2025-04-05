@@ -14,14 +14,6 @@
 
 package main
 
-import (
-	"flag"
-)
-
-var (
-	mode = flag.Int("mode", 0, "service mode: 1-http service, 2-grpc service, 3-distributed service")
-)
-
 func main() {
-	flag.Parse()
+
 }
