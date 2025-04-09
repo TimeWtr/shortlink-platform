@@ -3,7 +3,7 @@ syntax="proto3";
 import "google/api/annotations.proto";
 
 package generator.v1;
-option go_package = "github.com/TimeWtr/shortlink-platform/generator/v1;generator.v1";
+option go_package = "github.com/TimeWtr/shortlink-platform/generator/api/proto/generator.v1;generatorv1";
 
 service HTTPGenerator {
   // 生成单条短链

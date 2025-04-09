@@ -1,7 +1,7 @@
 syntax="proto3";
 
-package generator.v1;
-option go_package = "github.com/TimeWtr/shortlink-platform/generator/v1;generatorv1";
+package intr.v1;
+option go_package = "intr.v1;intrv1";
 
 service RPCGenerator {
   // 生成单条短链
