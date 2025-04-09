@@ -22,21 +22,23 @@ import (
 )
 
 const (
-	// Capacity channel容量
-	Capacity = 10000
 	// InstanceBits 实例ID的位数
 	InstanceBits = 5
 )
 
-type SnowflakeID struct {
-	// 当前的机房编号
-	DataCenterID int64
-	// 当前实例ID
-	InstanceID int64
+// 全局单例模式保证只有一个node
+var (
+	instance *SnowflakeNode
+	once     sync.Once
+)
+
+type SnowflakeNode struct {
 	// ID传输通道
-	ch chan any
+	ch chan int64
 	// 传输通道的容量
 	capacity int64
+	// 节点
+	node *snowflake.Node
 	// 关闭通道
 	stop chan struct{}
 	// 单例
@@ -44,7 +46,7 @@ type SnowflakeID struct {
 }
 
 func NewGenID(dataCenterID int64, instanceID int64, capacity int64) (IDInter, error) {
-	if instanceID < 1 || instanceID > 32 {
+	if instanceID < 1 || instanceID > 31 {
 		return nil, fmt.Errorf("instanceID out of range: 0-31")
 	}
 
@@ -52,45 +54,51 @@ func NewGenID(dataCenterID int64, instanceID int64, capacity int64) (IDInter, er
 		return nil, fmt.Errorf("dataCenterID out of range: 0-31")
 	}
 
-	return &SnowflakeID{
-		DataCenterID: dataCenterID,
-		InstanceID:   instanceID,
-		capacity:     capacity,
-		once:         sync.Once{},
-	}, nil
-}
-
-func (s *SnowflakeID) GetIDChannel() (<-chan any, error) {
-	nodeID := (s.DataCenterID << InstanceBits) | s.InstanceID
+	nodeID := (dataCenterID << InstanceBits) | instanceID
 	node, err := snowflake.NewNode(nodeID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to initialize snowflake node, err: %v", err)
 	}
 
-	// 初始化通道
-	s.ch = make(chan any, s.capacity)
-	s.stop = make(chan struct{})
-
-	go func() {
-		for {
-			select {
-			case <-s.stop:
-				fmt.Println("stopped!")
-				return
-			default:
-				// 这里需要阻塞，如果ID已经满了，就不需要生成
-				s.ch <- node.Generate().Int64()
-			}
+	once.Do(func() {
+		instance = &SnowflakeNode{
+			capacity: capacity,
+			once:     sync.Once{},
+			node:     node,
+			ch:       make(chan int64, capacity),
+			stop:     make(chan struct{}),
 		}
-	}()
 
+		go instance.run()
+	})
+
+	return instance, nil
+}
+
+func (s *SnowflakeNode) GetChannel() (<-chan int64, error) {
 	return s.ch, nil
 }
 
-func (s *SnowflakeID) Close() {
-	s.once.Do(func() {
-		if s.stop != nil {
-			close(s.stop)
+func (s *SnowflakeNode) run() {
+	for {
+		select {
+		case <-s.stop:
+			close(s.ch)
+			return
+		default:
+			select {
+			case <-s.stop:
+				close(s.ch)
+				return
+			case s.ch <- s.node.Generate().Int64():
+			default:
+			}
 		}
+	}
+}
+
+func (s *SnowflakeNode) Close() {
+	s.once.Do(func() {
+		close(s.stop)
 	})
 }
