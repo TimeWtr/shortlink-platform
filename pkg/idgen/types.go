@@ -15,8 +15,8 @@
 package idgen
 
 type IDInter interface {
-	// GetIDChannel 获取ID的传输只读channel
-	GetIDChannel() (<-chan any, error)
+	// GetChannel 获取ID的传输只读channel
+	GetChannel() (<-chan int64, error)
 	// Close 关闭通道
 	Close()
 }

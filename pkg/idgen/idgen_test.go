@@ -22,12 +22,13 @@ import (
 )
 
 func TestSnowflakeID_GetIDChannel(t *testing.T) {
-	idCenter, err := NewGenID(9, 23, 10000)
+	idCenter, err := NewGenID(9, 23, 100000)
 	assert.NoError(t, err)
-	ch, err := idCenter.GetIDChannel()
+	defer idCenter.Close()
+	ch, err := idCenter.GetChannel()
 	assert.NoError(t, err)
 
-	ticker := time.NewTicker(time.Millisecond * 100)
+	ticker := time.NewTicker(time.Millisecond * 5)
 	defer ticker.Stop()
 	sig := make(chan struct{})
 	go func() {
@@ -44,16 +45,26 @@ func TestSnowflakeID_GetIDChannel(t *testing.T) {
 	}()
 	time.Sleep(10 * time.Second)
 	close(sig)
-	idCenter.Close()
+}
+
+func TestSnowflakeNode_DataCenterID_Error(t *testing.T) {
+	_, err := NewGenID(33, 23, 100000)
+	assert.Error(t, err)
+}
+
+func TestSnowflakeNode_InstanceID_Error(t *testing.T) {
+	_, err := NewGenID(31, 35, 100000)
+	assert.Error(t, err)
 }
 
 func TestSnowflakeID_Close(t *testing.T) {
-	idCenter, err := NewGenID(9, 23, 10000)
+	idCenter, err := NewGenID(9, 23, 100000)
 	assert.NoError(t, err)
-	ch, err := idCenter.GetIDChannel()
+	defer idCenter.Close()
+	ch, err := idCenter.GetChannel()
 	assert.NoError(t, err)
 
-	ticker := time.NewTicker(time.Millisecond * 100)
+	ticker := time.NewTicker(time.Millisecond * 5)
 	defer ticker.Stop()
 	sig := make(chan struct{})
 	go func() {
@@ -70,31 +81,50 @@ func TestSnowflakeID_Close(t *testing.T) {
 	}()
 	time.Sleep(2 * time.Second)
 	close(sig)
-	idCenter.Close()
-	time.Sleep(time.Second)
 }
 
 func BenchmarkSnowflakeID_GetIDChannel_Log(b *testing.B) {
-	idCenter, err := NewGenID(10, 31, 10000)
+	idCenter, err := NewGenID(10, 31, 100000)
 	assert.NoError(b, err)
-	ch, err := idCenter.GetIDChannel()
+
+	ch, err := idCenter.GetChannel()
 	assert.NoError(b, err)
-	defer idCenter.Close()
+
+	go func() {
+		time.Sleep(1 * time.Second)
+		idCenter.Close()
+	}()
 
 	for i := 0; i < b.N; i++ {
-		id := <-ch
-		b.Logf("Get id: %d\n", id)
+		select {
+		case id, ok := <-ch:
+			if !ok {
+				return
+			}
+			b.Logf("Get id: %d\n", id)
+		default:
+		}
 	}
 }
 
 func BenchmarkSnowflakeID_GetIDChannel_NoLog(b *testing.B) {
 	idCenter, err := NewGenID(0, 31, 10000)
 	assert.NoError(b, err)
-	ch, err := idCenter.GetIDChannel()
+	ch, err := idCenter.GetChannel()
 	assert.NoError(b, err)
-	defer idCenter.Close()
+
+	go func() {
+		time.Sleep(1 * time.Second)
+		idCenter.Close()
+	}()
 
 	for i := 0; i < b.N; i++ {
-		<-ch
+		select {
+		case _, ok := <-ch:
+			if !ok {
+				return
+			}
+		default:
+		}
 	}
 }
