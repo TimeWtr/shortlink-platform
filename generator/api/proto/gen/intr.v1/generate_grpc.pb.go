@@ -20,143 +20,223 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	RPCGenerator_GenerateURL_FullMethodName      = "/intr.v1.RPCGenerator/GenerateURL"
-	RPCGenerator_BatchGenerateURL_FullMethodName = "/intr.v1.RPCGenerator/BatchGenerateURL"
+	Generator_GenerateURL_FullMethodName      = "/intr.v1.Generator/GenerateURL"
+	Generator_BatchGenerateURL_FullMethodName = "/intr.v1.Generator/BatchGenerateURL"
+	Generator_UpdateURL_FullMethodName        = "/intr.v1.Generator/UpdateURL"
+	Generator_DeleteURL_FullMethodName        = "/intr.v1.Generator/DeleteURL"
 )
 
-// RPCGeneratorClient is the client API for RPCGenerator service.
+// GeneratorClient is the client API for Generator service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type RPCGeneratorClient interface {
+type GeneratorClient interface {
 	// 生成单条短链
 	GenerateURL(ctx context.Context, in *URLRequest, opts ...grpc.CallOption) (*URLResponse, error)
 	// 批量生成短链
 	BatchGenerateURL(ctx context.Context, in *BatchURLRequest, opts ...grpc.CallOption) (*BatchURLResponse, error)
+	// 修改单条短链
+	UpdateURL(ctx context.Context, in *URLRequest, opts ...grpc.CallOption) (*URLResponse, error)
+	// 删除单条短链
+	DeleteURL(ctx context.Context, in *DelRequest, opts ...grpc.CallOption) (*DelResponse, error)
 }
 
-type rPCGeneratorClient struct {
+type generatorClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewRPCGeneratorClient(cc grpc.ClientConnInterface) RPCGeneratorClient {
-	return &rPCGeneratorClient{cc}
+func NewGeneratorClient(cc grpc.ClientConnInterface) GeneratorClient {
+	return &generatorClient{cc}
 }
 
-func (c *rPCGeneratorClient) GenerateURL(ctx context.Context, in *URLRequest, opts ...grpc.CallOption) (*URLResponse, error) {
+func (c *generatorClient) GenerateURL(ctx context.Context, in *URLRequest, opts ...grpc.CallOption) (*URLResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(URLResponse)
-	err := c.cc.Invoke(ctx, RPCGenerator_GenerateURL_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Generator_GenerateURL_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *rPCGeneratorClient) BatchGenerateURL(ctx context.Context, in *BatchURLRequest, opts ...grpc.CallOption) (*BatchURLResponse, error) {
+func (c *generatorClient) BatchGenerateURL(ctx context.Context, in *BatchURLRequest, opts ...grpc.CallOption) (*BatchURLResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(BatchURLResponse)
-	err := c.cc.Invoke(ctx, RPCGenerator_BatchGenerateURL_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, Generator_BatchGenerateURL_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// RPCGeneratorServer is the server API for RPCGenerator service.
-// All implementations must embed UnimplementedRPCGeneratorServer
+func (c *generatorClient) UpdateURL(ctx context.Context, in *URLRequest, opts ...grpc.CallOption) (*URLResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(URLResponse)
+	err := c.cc.Invoke(ctx, Generator_UpdateURL_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *generatorClient) DeleteURL(ctx context.Context, in *DelRequest, opts ...grpc.CallOption) (*DelResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DelResponse)
+	err := c.cc.Invoke(ctx, Generator_DeleteURL_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// GeneratorServer is the server API for Generator service.
+// All implementations must embed UnimplementedGeneratorServer
 // for forward compatibility.
-type RPCGeneratorServer interface {
+type GeneratorServer interface {
 	// 生成单条短链
 	GenerateURL(context.Context, *URLRequest) (*URLResponse, error)
 	// 批量生成短链
 	BatchGenerateURL(context.Context, *BatchURLRequest) (*BatchURLResponse, error)
-	mustEmbedUnimplementedRPCGeneratorServer()
+	// 修改单条短链
+	UpdateURL(context.Context, *URLRequest) (*URLResponse, error)
+	// 删除单条短链
+	DeleteURL(context.Context, *DelRequest) (*DelResponse, error)
+	mustEmbedUnimplementedGeneratorServer()
 }
 
-// UnimplementedRPCGeneratorServer must be embedded to have
+// UnimplementedGeneratorServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedRPCGeneratorServer struct{}
+type UnimplementedGeneratorServer struct{}
 
-func (UnimplementedRPCGeneratorServer) GenerateURL(context.Context, *URLRequest) (*URLResponse, error) {
+func (UnimplementedGeneratorServer) GenerateURL(context.Context, *URLRequest) (*URLResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GenerateURL not implemented")
 }
-func (UnimplementedRPCGeneratorServer) BatchGenerateURL(context.Context, *BatchURLRequest) (*BatchURLResponse, error) {
+func (UnimplementedGeneratorServer) BatchGenerateURL(context.Context, *BatchURLRequest) (*BatchURLResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BatchGenerateURL not implemented")
 }
-func (UnimplementedRPCGeneratorServer) mustEmbedUnimplementedRPCGeneratorServer() {}
-func (UnimplementedRPCGeneratorServer) testEmbeddedByValue()                      {}
+func (UnimplementedGeneratorServer) UpdateURL(context.Context, *URLRequest) (*URLResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateURL not implemented")
+}
+func (UnimplementedGeneratorServer) DeleteURL(context.Context, *DelRequest) (*DelResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteURL not implemented")
+}
+func (UnimplementedGeneratorServer) mustEmbedUnimplementedGeneratorServer() {}
+func (UnimplementedGeneratorServer) testEmbeddedByValue()                   {}
 
-// UnsafeRPCGeneratorServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to RPCGeneratorServer will
+// UnsafeGeneratorServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to GeneratorServer will
 // result in compilation errors.
-type UnsafeRPCGeneratorServer interface {
-	mustEmbedUnimplementedRPCGeneratorServer()
+type UnsafeGeneratorServer interface {
+	mustEmbedUnimplementedGeneratorServer()
 }
 
-func RegisterRPCGeneratorServer(s grpc.ServiceRegistrar, srv RPCGeneratorServer) {
-	// If the following call pancis, it indicates UnimplementedRPCGeneratorServer was
+func RegisterGeneratorServer(s grpc.ServiceRegistrar, srv GeneratorServer) {
+	// If the following call pancis, it indicates UnimplementedGeneratorServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&RPCGenerator_ServiceDesc, srv)
+	s.RegisterService(&Generator_ServiceDesc, srv)
 }
 
-func _RPCGenerator_GenerateURL_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Generator_GenerateURL_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(URLRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RPCGeneratorServer).GenerateURL(ctx, in)
+		return srv.(GeneratorServer).GenerateURL(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: RPCGenerator_GenerateURL_FullMethodName,
+		FullMethod: Generator_GenerateURL_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RPCGeneratorServer).GenerateURL(ctx, req.(*URLRequest))
+		return srv.(GeneratorServer).GenerateURL(ctx, req.(*URLRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RPCGenerator_BatchGenerateURL_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Generator_BatchGenerateURL_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(BatchURLRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(RPCGeneratorServer).BatchGenerateURL(ctx, in)
+		return srv.(GeneratorServer).BatchGenerateURL(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: RPCGenerator_BatchGenerateURL_FullMethodName,
+		FullMethod: Generator_BatchGenerateURL_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RPCGeneratorServer).BatchGenerateURL(ctx, req.(*BatchURLRequest))
+		return srv.(GeneratorServer).BatchGenerateURL(ctx, req.(*BatchURLRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// RPCGenerator_ServiceDesc is the grpc.ServiceDesc for RPCGenerator service.
+func _Generator_UpdateURL_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(URLRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GeneratorServer).UpdateURL(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Generator_UpdateURL_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GeneratorServer).UpdateURL(ctx, req.(*URLRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Generator_DeleteURL_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DelRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GeneratorServer).DeleteURL(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Generator_DeleteURL_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GeneratorServer).DeleteURL(ctx, req.(*DelRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Generator_ServiceDesc is the grpc.ServiceDesc for Generator service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var RPCGenerator_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "intr.v1.RPCGenerator",
-	HandlerType: (*RPCGeneratorServer)(nil),
+var Generator_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "intr.v1.Generator",
+	HandlerType: (*GeneratorServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "GenerateURL",
-			Handler:    _RPCGenerator_GenerateURL_Handler,
+			Handler:    _Generator_GenerateURL_Handler,
 		},
 		{
 			MethodName: "BatchGenerateURL",
-			Handler:    _RPCGenerator_BatchGenerateURL_Handler,
+			Handler:    _Generator_BatchGenerateURL_Handler,
+		},
+		{
+			MethodName: "UpdateURL",
+			Handler:    _Generator_UpdateURL_Handler,
+		},
+		{
+			MethodName: "DeleteURL",
+			Handler:    _Generator_DeleteURL_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

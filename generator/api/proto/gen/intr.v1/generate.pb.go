@@ -11,6 +11,7 @@ import (
 	sync "sync"
 	unsafe "unsafe"
 
+	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
@@ -394,11 +395,200 @@ func (x *BatchURLResponse) GetMessage() string {
 	return ""
 }
 
+type UpdateURLRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 所属业务
+	Biz string `protobuf:"bytes,1,opt,name=biz,proto3" json:"biz,omitempty"`
+	// URL所属ID
+	Id int64 `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	// 核心元数据
+	Meta *Metadata `protobuf:"bytes,3,opt,name=meta,proto3" json:"meta,omitempty"`
+	// 创建者表示
+	Creator       string `protobuf:"bytes,4,opt,name=creator,proto3" json:"creator,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateURLRequest) Reset() {
+	*x = UpdateURLRequest{}
+	mi := &file_generate_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateURLRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateURLRequest) ProtoMessage() {}
+
+func (x *UpdateURLRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_generate_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateURLRequest.ProtoReflect.Descriptor instead.
+func (*UpdateURLRequest) Descriptor() ([]byte, []int) {
+	return file_generate_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *UpdateURLRequest) GetBiz() string {
+	if x != nil {
+		return x.Biz
+	}
+	return ""
+}
+
+func (x *UpdateURLRequest) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *UpdateURLRequest) GetMeta() *Metadata {
+	if x != nil {
+		return x.Meta
+	}
+	return nil
+}
+
+func (x *UpdateURLRequest) GetCreator() string {
+	if x != nil {
+		return x.Creator
+	}
+	return ""
+}
+
+type DelRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 所属业务
+	Biz string `protobuf:"bytes,1,opt,name=biz,proto3" json:"biz,omitempty"`
+	// ID
+	Id int64 `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	// URL信息
+	Url           string `protobuf:"bytes,3,opt,name=url,proto3" json:"url,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DelRequest) Reset() {
+	*x = DelRequest{}
+	mi := &file_generate_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DelRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DelRequest) ProtoMessage() {}
+
+func (x *DelRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_generate_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DelRequest.ProtoReflect.Descriptor instead.
+func (*DelRequest) Descriptor() ([]byte, []int) {
+	return file_generate_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *DelRequest) GetBiz() string {
+	if x != nil {
+		return x.Biz
+	}
+	return ""
+}
+
+func (x *DelRequest) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *DelRequest) GetUrl() string {
+	if x != nil {
+		return x.Url
+	}
+	return ""
+}
+
+type DelResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 状态码
+	Code int64 `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
+	// 消息
+	Message       string `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DelResponse) Reset() {
+	*x = DelResponse{}
+	mi := &file_generate_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DelResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DelResponse) ProtoMessage() {}
+
+func (x *DelResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_generate_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DelResponse.ProtoReflect.Descriptor instead.
+func (*DelResponse) Descriptor() ([]byte, []int) {
+	return file_generate_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *DelResponse) GetCode() int64 {
+	if x != nil {
+		return x.Code
+	}
+	return 0
+}
+
+func (x *DelResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
 var File_generate_proto protoreflect.FileDescriptor
 
 const file_generate_proto_rawDesc = "" +
 	"\n" +
-	"\x0egenerate.proto\x12\aintr.v1\"\x83\x01\n" +
+	"\x0egenerate.proto\x12\aintr.v1\x1a\x1cgoogle/api/annotations.proto\"\x83\x01\n" +
 	"\bMetadata\x12!\n" +
 	"\foriginal_url\x18\x01 \x01(\tR\voriginalUrl\x12\x1e\n" +
 	"\n" +
@@ -430,10 +620,25 @@ const file_generate_proto_rawDesc = "" +
 	"\x04resp\x18\x01 \x03(\v2\x1b.intr.v1.URLResponseContentR\x04resp\x12\x1f\n" +
 	"\vstatus_code\x18\x02 \x01(\x03R\n" +
 	"statusCode\x12\x18\n" +
-	"\amessage\x18\x03 \x01(\tR\amessage2\x91\x01\n" +
-	"\fRPCGenerator\x128\n" +
-	"\vGenerateURL\x12\x13.intr.v1.URLRequest\x1a\x14.intr.v1.URLResponse\x12G\n" +
-	"\x10BatchGenerateURL\x12\x18.intr.v1.BatchURLRequest\x1a\x19.intr.v1.BatchURLResponseB\x10Z\x0eintr.v1;intrv1b\x06proto3"
+	"\amessage\x18\x03 \x01(\tR\amessage\"u\n" +
+	"\x10UpdateURLRequest\x12\x10\n" +
+	"\x03biz\x18\x01 \x01(\tR\x03biz\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\x12%\n" +
+	"\x04meta\x18\x03 \x01(\v2\x11.intr.v1.MetadataR\x04meta\x12\x18\n" +
+	"\acreator\x18\x04 \x01(\tR\acreator\"@\n" +
+	"\n" +
+	"DelRequest\x12\x10\n" +
+	"\x03biz\x18\x01 \x01(\tR\x03biz\x12\x0e\n" +
+	"\x02id\x18\x02 \x01(\x03R\x02id\x12\x10\n" +
+	"\x03url\x18\x03 \x01(\tR\x03url\";\n" +
+	"\vDelResponse\x12\x12\n" +
+	"\x04code\x18\x01 \x01(\x03R\x04code\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage2\xc2\x02\n" +
+	"\tGenerator\x12W\n" +
+	"\vGenerateURL\x12\x13.intr.v1.URLRequest\x1a\x14.intr.v1.URLResponse\"\x1d\x82\xd3\xe4\x93\x02\x17:\x01*\"\x12/v1/generator/code\x12l\n" +
+	"\x10BatchGenerateURL\x12\x18.intr.v1.BatchURLRequest\x1a\x19.intr.v1.BatchURLResponse\"#\x82\xd3\xe4\x93\x02\x1d:\x01*\"\x18/v1/generator/batch/code\x126\n" +
+	"\tUpdateURL\x12\x13.intr.v1.URLRequest\x1a\x14.intr.v1.URLResponse\x126\n" +
+	"\tDeleteURL\x12\x13.intr.v1.DelRequest\x1a\x14.intr.v1.DelResponseB\x10Z\x0eintr.v1;intrv1b\x06proto3"
 
 var (
 	file_generate_proto_rawDescOnce sync.Once
@@ -447,7 +652,7 @@ func file_generate_proto_rawDescGZIP() []byte {
 	return file_generate_proto_rawDescData
 }
 
-var file_generate_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_generate_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_generate_proto_goTypes = []any{
 	(*Metadata)(nil),           // 0: intr.v1.Metadata
 	(*URLRequest)(nil),         // 1: intr.v1.URLRequest
@@ -455,21 +660,29 @@ var file_generate_proto_goTypes = []any{
 	(*URLResponseContent)(nil), // 3: intr.v1.URLResponseContent
 	(*BatchURLRequest)(nil),    // 4: intr.v1.BatchURLRequest
 	(*BatchURLResponse)(nil),   // 5: intr.v1.BatchURLResponse
+	(*UpdateURLRequest)(nil),   // 6: intr.v1.UpdateURLRequest
+	(*DelRequest)(nil),         // 7: intr.v1.DelRequest
+	(*DelResponse)(nil),        // 8: intr.v1.DelResponse
 }
 var file_generate_proto_depIdxs = []int32{
 	0, // 0: intr.v1.URLRequest.meta:type_name -> intr.v1.Metadata
 	3, // 1: intr.v1.URLResponse.resp:type_name -> intr.v1.URLResponseContent
 	0, // 2: intr.v1.BatchURLRequest.meta:type_name -> intr.v1.Metadata
 	3, // 3: intr.v1.BatchURLResponse.resp:type_name -> intr.v1.URLResponseContent
-	1, // 4: intr.v1.RPCGenerator.GenerateURL:input_type -> intr.v1.URLRequest
-	4, // 5: intr.v1.RPCGenerator.BatchGenerateURL:input_type -> intr.v1.BatchURLRequest
-	2, // 6: intr.v1.RPCGenerator.GenerateURL:output_type -> intr.v1.URLResponse
-	5, // 7: intr.v1.RPCGenerator.BatchGenerateURL:output_type -> intr.v1.BatchURLResponse
-	6, // [6:8] is the sub-list for method output_type
-	4, // [4:6] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	0, // 4: intr.v1.UpdateURLRequest.meta:type_name -> intr.v1.Metadata
+	1, // 5: intr.v1.Generator.GenerateURL:input_type -> intr.v1.URLRequest
+	4, // 6: intr.v1.Generator.BatchGenerateURL:input_type -> intr.v1.BatchURLRequest
+	1, // 7: intr.v1.Generator.UpdateURL:input_type -> intr.v1.URLRequest
+	7, // 8: intr.v1.Generator.DeleteURL:input_type -> intr.v1.DelRequest
+	2, // 9: intr.v1.Generator.GenerateURL:output_type -> intr.v1.URLResponse
+	5, // 10: intr.v1.Generator.BatchGenerateURL:output_type -> intr.v1.BatchURLResponse
+	2, // 11: intr.v1.Generator.UpdateURL:output_type -> intr.v1.URLResponse
+	8, // 12: intr.v1.Generator.DeleteURL:output_type -> intr.v1.DelResponse
+	9, // [9:13] is the sub-list for method output_type
+	5, // [5:9] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_generate_proto_init() }
@@ -484,7 +697,7 @@ func file_generate_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_generate_proto_rawDesc), len(file_generate_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   6,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

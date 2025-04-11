@@ -85,14 +85,8 @@ func (s *SnowflakeNode) run() {
 		case <-s.stop:
 			close(s.ch)
 			return
+		case s.ch <- s.node.Generate().Int64():
 		default:
-			select {
-			case <-s.stop:
-				close(s.ch)
-				return
-			case s.ch <- s.node.Generate().Int64():
-			default:
-			}
 		}
 	}
 }
