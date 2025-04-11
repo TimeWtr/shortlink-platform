@@ -39,6 +39,7 @@ sequenceDiagram
 ```
 
 ### 2. 短码池预生成流程
+#### 2.1 哈希+解决冲突算法
 ```mermaid
 sequenceDiagram
     participant Scheduler
@@ -49,20 +50,62 @@ sequenceDiagram
     Instance ->> Scheduler: 抢占定时任务
     Scheduler -->> Instance: 抢占成功
     Instance ->> Pool[Redis List]: 查询池中的预生成短码数量是否小于阈值(100000条)
-    alt 数量足够
+    alt 数量满足
         Pool[Redis List] -->> Instance: 结束定时任务
     else 数量不够, 本地预生成足够数量的短码
         loop
-           Instance ->> Instance: 生成一条新的短码
-           Instance ->> Bloom filter: 查询短码是否存在
-           alt 存在
-              Instance ->> Instance: 重新生成
-           else 不存在
-              Instance ->> Instance: 本地缓存
+            Instance ->> Instance: 检查生成的数量是否满足
+            alt 数量满足
+                note right of Instance: 达到阈值，退出循环
+            else 不满足
+               Instance ->> Instance: 生成一条新的短码
+               Instance ->> Bloom filter: 查询短码是否存在
+               alt 存在
+                  Instance ->> Instance: 加入随机盐值
+                  note right of Instance: 重复此步骤直至哈希短码不再重复
+               else 不存在
+                  Instance ->> Instance: 本地缓存
+                  alt 本批次达到1000条短码
+                      note right of Instance: Pipeline写入/Lua脚本写入
+                      Instance ->> Pool[Redis List]: 批量写入到短码池[并发安全]
+                      Instance ->> Bloom filter: 批量新增到过滤器[并发安全]
+                  end
+               end
            end
         end
-        Instance ->> Pool[Redis List]: 批量写入到短码池[并发安全]
-        Instance ->> Bloom filter: 批量新增到过滤器[并发安全]
     end
-    Instance -->> Scheduler: 结束抢占到的定时任务
+    Instance -->> Scheduler: 结束抢占到的定时任务，等待下次执行
+```
+#### 2.2 递增序列+Base62算法
+```mermaid
+sequenceDiagram
+    participant Scheduler
+    participant Instance
+    participant Pool[Redis List]
+    participant DB
+    
+    Instance ->> Scheduler: 抢占定时任务
+    Scheduler -->> Instance: 抢占成功
+    Instance ->> Pool[Redis List]: 查询池中的预生成短码数量是否小于阈值(100000条)
+    alt 数量足够
+        note right of Instance: 结束定时任务
+    else 数量小于阈值
+        Instance ->> DB: 查询上次定时任务生成的最新递增ID
+        loop
+            alt 数量满足
+                note right of Instance: 达到阈值，退出循环
+            else
+                Instance ->> Instance: 生成新的递增ID
+                Instance ->> Instance: Base62计算，获取新的短码
+                Instance ->> Instance: 本地缓存
+                alt 本批次达到1000条短码
+                    note right of Instance: Pipeline写入/Lua脚本写入
+                    Instance ->> Pool[Redis List]: 批量写入预生成短码到短码池，并更新总数[并发安全]
+                    Instance ->> DB: 更新最新的递增ID到数据库[并发安全]
+                end
+            end
+        end
+    end
+    
+    Instance -->> Scheduler: 结束抢占到的定时任务，等待下次执行
 ```
