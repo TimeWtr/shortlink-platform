@@ -2,7 +2,7 @@
 基于Go实现的高可用、高性能短链接生成平台
 
 
-### 单条短码生成流程
+### 1. 单条短码生成流程
 ```mermaid
 
 sequenceDiagram
@@ -36,4 +36,33 @@ sequenceDiagram
       API->>Cache: 将短码与原始URL的映射关系缓存
       API -->>Client: 生成成功
     end
+```
+
+### 2. 短码池预生成流程
+```mermaid
+sequenceDiagram
+    participant Scheduler
+    participant Instance
+    participant Pool[Redis List]
+    participant Bloom filter
+    
+    Instance ->> Scheduler: 抢占定时任务
+    Scheduler -->> Instance: 抢占成功
+    Instance ->> Pool[Redis List]: 查询池中的预生成短码数量是否小于阈值(100000条)
+    alt 数量足够
+        Pool[Redis List] -->> Instance: 结束定时任务
+    else 数量不够, 本地预生成足够数量的短码
+        loop
+           Instance ->> Instance: 生成一条新的短码
+           Instance ->> Bloom filter: 查询短码是否存在
+           alt 存在
+              Instance ->> Instance: 重新生成
+           else 不存在
+              Instance ->> Instance: 本地缓存
+           end
+        end
+        Instance ->> Pool[Redis List]: 批量写入到短码池[并发安全]
+        Instance ->> Bloom filter: 批量新增到过滤器[并发安全]
+    end
+    Instance -->> Scheduler: 结束抢占到的定时任务
 ```
